@@ -11,7 +11,7 @@ contract UsersContract {
     mapping(address => bool) private joinedUsers;
     address[] total;
 
-    event onUserJoined(address, string);
+    event OnUserJoined(address, string);
 
     /**
      * users join
@@ -19,7 +19,7 @@ contract UsersContract {
      * @param surName {string} - user surname
      */
     function join(string name, string surName) public {
-        require(!userJoined(msg.sender));
+        require(!userJoined(msg.sender), "Account already joined");
 
         User storage user = users[msg.sender];
         user.name = name;
@@ -27,7 +27,7 @@ contract UsersContract {
 
         joinedUsers[msg.sender] = true;
         total.push(msg.sender);
-        emit onUserJoined(msg.sender, string(abi.encodePacked(name, " ", surName)));
+        emit OnUserJoined(msg.sender, string(abi.encodePacked(name, " ", surName)));
     }
 
     /**
@@ -36,7 +36,7 @@ contract UsersContract {
      * @return {string} - full user name
      */
     function getUser(address addr) public view returns (string, string) {
-        require(userJoined(msg.sender));
+        require(userJoined(msg.sender), "Account must be join");
 
         User memory user = users[addr];
         return (user.name, user.surName);
